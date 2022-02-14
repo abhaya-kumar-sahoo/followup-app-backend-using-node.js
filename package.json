@@ -1,0 +1,20 @@
+{
+  "name": "Practice",
+  "version": "1.0.0",
+  "main": "app.js",
+  "license": "MIT",
+  "dependencies": {
+    "@vonage/server-sdk": "^2.10.10",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.1",
+    "colors": "^1.4.0",
+    "express": "^4.17.2",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.1.7",
+    "nexmo": "^2.9.1",
+    "validator": "^13.7.0"
+  },
+  "scripts": {
+    "start": "node app.js"
+  }
+}
