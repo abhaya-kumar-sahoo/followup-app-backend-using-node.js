@@ -35,34 +35,30 @@ router.post("/registration", async (req, res) => {
 
   let jwtSecretKey = process.env.JWT_SECRET_KEY;
   try {
-    const { name, password, cPassword, email } = req.body;
-    const isEmail = await validator.validate(email);
+    const { name, password, cPassword } = req.body;
+    // const isEmail = await validator.validate(email);
 
-    if (!isEmail) return res.send({ msg: "Invalid email id" });
+    // if (!isEmail) return res.send({ msg: "Invalid email id" });
 
-    const user = await User.findOne({ email });
+    if (!name || !password || !cPassword) {
+      return res.send({
+        msg: "Please fill all field",
+      });
+    }
+
+    const user = await User.findOne({ name });
     if (user) {
       return res.send({ msg: "User Already Exist" });
     }
-    if (!name || !password || !cPassword || !email) {
-      return res.send({
-        msg: "Please fill all field",
-        result: [],
-        error: true,
-      });
-    }
-    if (password.length > 6) {
+
+    if (password.length < 6) {
       return res.send({
         msg: "Password length most be greater then 6",
-        error: true,
-        result: [],
       });
     }
     if (password !== cPassword) {
       return res.send({
         msg: "Password is not matching",
-        result: [],
-        error: true,
       });
     }
     const hashPsw = await bcrypt.hash(password, 10);
@@ -70,9 +66,9 @@ router.post("/registration", async (req, res) => {
     const data = await new User({
       name,
       password: hashPsw,
-      email});
+    });
     await data.save((err, result) => {
-      return res.send({ result });
+      return res.send({ data: result });
     });
   } catch (error) {
     console.log(error);
@@ -80,10 +76,10 @@ router.post("/registration", async (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
+  const { name, password } = req.body;
   let jwtSecretKey = process.env.JWT_SECRET_KEY;
 
-  const data = await User.findOne({ email });
+  const data = await User.findOne({ name });
   if (!data) return null;
 
   const checkPsw = await bcrypt.compare(password, data.password);

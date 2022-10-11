@@ -34,7 +34,7 @@ app.use('',Posts)
 
 
 app.get("/", (req, res) => {
-  return res.send({ msg: "Home page", page: "page-1" });
+  return res.send({ msg: "Home Page of Followup App"});
 });
 
 
