@@ -47,6 +47,7 @@ router.post("/registration", async (req, res) => {
     }
 
     const user = await User.findOne({ name });
+    console.log(user);
     if (user) {
       return res.send({ msg: "User Already Exist" });
     }
