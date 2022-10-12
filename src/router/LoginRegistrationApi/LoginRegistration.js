@@ -97,13 +97,20 @@ router.post("/login", async (req, res) => {
 });
 
 router.post("/user_exist", async (req, res) => {
-  const { name } = req.body;
+  try {
+    const { name, password } = req.body;
 
-  const find = await User.findOne({ name });
-  if (find) {
-    res.send({ msg: "That username is taken, Try another." });
+    const data = await User.findOne({ name });
+    if (data)
+      return res.send({
+        msg: "This username is taken, Try another",
+        error: true,
+      });
+    return res.send({ msg: "Username available", error: false });
+  } catch (error) {
+    console.log("error", error);
+    res.send({ msg: error, error: true });
   }
-  res.send({ msg: "Username available" });
 });
 
 const loginRoute = router;
