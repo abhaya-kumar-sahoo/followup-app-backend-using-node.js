@@ -81,13 +81,14 @@ router.post("/login", async (req, res) => {
   let jwtSecretKey = process.env.JWT_SECRET_KEY;
 
   const data = await User.findOne({ name });
-  if (!data) return res.send({ msg: "No user with this credential" });
+  if (!data)
+    return res.send({ msg: "No user with this credential", error: true });
 
   const checkPsw = await bcrypt.compare(password, data.password);
   if (checkPsw) {
     const token = await jwt.sign({ _id: data._id }, jwtSecretKey);
 
-    return res.send({ msg: "Login Successful", token, data });
+    return res.send({ msg: "Login Successful", token, data, error: false });
   }
   return res.send({ msg: "Login credential are not matching", error: true });
 });
