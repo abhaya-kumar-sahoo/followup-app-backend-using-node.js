@@ -96,5 +96,15 @@ router.post("/login", async (req, res) => {
   return res.send({ msg: "Login credential are not matching", error: true });
 });
 
+router.post("/user_exist", async (req, res) => {
+  const { name } = req.body;
+
+  const find = await User.find({ name });
+  if (find) {
+    res.send({ msg: "That username is taken, Try another." });
+  }
+  res.send({ msg: "Username available" });
+});
+
 const loginRoute = router;
 module.exports = loginRoute;
