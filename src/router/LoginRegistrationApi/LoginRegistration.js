@@ -99,7 +99,7 @@ router.post("/login", async (req, res) => {
 router.post("/user_exist", async (req, res) => {
   const { name } = req.body;
 
-  const find = await User.find({ name });
+  const find = await User.findOne({ name });
   if (find) {
     res.send({ msg: "That username is taken, Try another." });
   }
