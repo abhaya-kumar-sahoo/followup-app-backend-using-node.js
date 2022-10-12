@@ -81,7 +81,7 @@ router.post("/login", async (req, res) => {
   let jwtSecretKey = process.env.JWT_SECRET_KEY;
 
   const data = await User.findOne({ name });
-  if (!data) return null;
+  if (!data) return res.send({ msg: "No user with this credential" });
 
   const checkPsw = await bcrypt.compare(password, data.password);
   if (checkPsw) {
