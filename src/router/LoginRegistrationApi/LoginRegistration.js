@@ -43,23 +43,25 @@ router.post("/registration", async (req, res) => {
     if (!name || !password || !cPassword) {
       return res.send({
         msg: "Please fill all field",
+        error: true,
       });
     }
 
     const user = await User.findOne({ name });
-    console.log(user);
     if (user) {
-      return res.send({ msg: "User Already Exist" });
+      return res.send({ msg: "User Already Exist", error: true });
     }
 
     if (password.length < 6) {
       return res.send({
         msg: "Password length most be greater then 6",
+        error: true,
       });
     }
     if (password !== cPassword) {
       return res.send({
         msg: "Password is not matching",
+        error: true,
       });
     }
     const hashPsw = await bcrypt.hash(password, 10);
@@ -69,10 +71,11 @@ router.post("/registration", async (req, res) => {
       password: hashPsw,
     });
     await data.save((err, result) => {
-      return res.send({ data: result });
+      return res.send({ data: result, error: false });
     });
   } catch (error) {
     console.log(error);
+    return res.send({ msg: error, error: true });
   }
 });
 
