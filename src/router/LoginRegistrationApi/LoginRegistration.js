@@ -75,7 +75,7 @@ router.post("/registration", async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    return res.send({ msg: error, error: true });
+    return res.send({ msg: "try again", error: true });
   }
 });
 
@@ -84,8 +84,7 @@ router.post("/login", async (req, res) => {
   let jwtSecretKey = process.env.JWT_SECRET_KEY;
 
   const data = await User.findOne({ name });
-  if (!data)
-    return res.send({ msg: "No user with this credential", error: true });
+  if (!data) return res.send({ msg: "Invalid credential", error: true });
 
   const checkPsw = await bcrypt.compare(password, data.password);
   if (checkPsw) {
@@ -93,7 +92,7 @@ router.post("/login", async (req, res) => {
 
     return res.send({ msg: "Login Successful", token, data, error: false });
   }
-  return res.send({ msg: "Login credential are not matching", error: true });
+  return res.send({ msg: "Invalid credential", error: true });
 });
 
 router.post("/user_exist", async (req, res) => {
@@ -107,6 +106,22 @@ router.post("/user_exist", async (req, res) => {
         error: true,
       });
     return res.send({ msg: "Username available", error: false });
+  } catch (error) {
+    console.log("error", error);
+    res.send({ msg: error, error: true });
+  }
+});
+
+router.post("/all_users", async (req, res) => {
+  try {
+    const data = await User.find().select({ name: 1 });
+    if (data)
+      return res.send({
+        msg: "Success",
+        error: true,
+        data,
+      });
+    return res.send({ msg: "Something went wrong", error: true, data: [] });
   } catch (error) {
     console.log("error", error);
     res.send({ msg: error, error: true });
