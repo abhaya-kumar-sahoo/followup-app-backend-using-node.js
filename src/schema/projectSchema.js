@@ -6,7 +6,7 @@ const AddProjectSchema = new mongoose.Schema(
     project_name: String,
     users: [
       {
-        postedBy: {
+        user: {
           type: ObjectId,
           ref: "Registration",
         },
