@@ -4,10 +4,9 @@ const AddProjectSchema = require("../../schema/projectSchema");
 const router = express.Router();
 
 router.post("/my_projects", auth, async (req, res) => {
-  const data = await AddProjectSchema.find({ postedBy: req.user._id }).populate(
-    "postedBy",
-    "_id name"
-  );
+  const data = await AddProjectSchema.find({ postedBy: req.user._id })
+    .populate("postedBy", "_id name")
+    .populate("users.user", "_id name");
   if (data) {
     return res.send({ msg: "Success", data, error: false });
   }
