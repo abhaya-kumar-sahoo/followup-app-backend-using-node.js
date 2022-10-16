@@ -114,7 +114,7 @@ router.post("/user_exist", async (req, res) => {
 
 router.post("/all_users", async (req, res) => {
   try {
-    const data = await User.find().select({ name: 1, selected: 1 });
+    const data = await User.find().select({ name: 1, selected: 1, isAdmin: 1 });
     if (data)
       return res.send({
         msg: "Success",
