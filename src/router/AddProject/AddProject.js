@@ -70,16 +70,14 @@ router.put("/comments", auth, async (req, res) => {
 });
 
 router.put("/add_member", auth, async (req, res) => {
-  const { usersId, projectId } = req.body;
-  const userIds = {
-    postedBy: usersId,
-  };
+  const { users, projectId } = req.body;
+
   AddProjectSchema.findByIdAndUpdate(
     projectId,
-    { $push: { users: userIds } },
+    { $push: { users: users } },
     { new: true }
   )
-    .populate("users.postedBy", "_id name")
+    .populate("users.user", "_id name")
     .populate("comments.postedBy", "_id name")
     .populate("postedBy", "_id name")
     .exec((err, result) => {
