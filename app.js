@@ -9,7 +9,7 @@ const AddProject = require("./src/router/AddProject/AddProject");
 const Reports = require("./src/router/Reports/Reports");
 const Posts = require("./src/router/Post/Post");
 const MyProjects = require("./src/router/MyProjects/MyProjects");
-const ProjectMembers = require("./src/router/ProjectMemober/ProjectMemobers");
+const ProjectMembers = require("./src/router/ProjectMember/ProjectMembers");
 const RequestUsers = require("./src/router/RequestUserToProject/RequestUser");
 
 dotenv.config();

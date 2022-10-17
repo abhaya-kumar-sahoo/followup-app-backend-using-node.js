@@ -29,18 +29,29 @@ router.post("/requests", auth, async (req, res) => {
 
 router.put("/accept", auth, async (req, res) => {
   try {
-    const { accept, id } = req.body;
-    AddProjectSchema.updateOne(
+    const { accept, id, projectId } = req.body;
+    const data = await AddProjectSchema.updateOne(
       {
         "users._id": id,
       },
       { $set: { "users.$.accepted": accept } }
-    ).exec((result, err) => {
-      if (err) {
-        return res.json({ error: err });
-      }
-      return res.json(result);
-    });
+    );
+
+    const users = [{ user: req.user._id }];
+    AddProjectSchema.findByIdAndUpdate(
+      projectId,
+      { $push: { users: users } },
+      { new: true }
+    )
+      .populate("users.user", "_id name")
+      .populate("comments.postedBy", "_id name")
+      .populate("postedBy", "_id name")
+      .exec((err, result) => {
+        if (err) {
+          return res.json({ error: err });
+        }
+        return res.json(result);
+      });
   } catch (error) {
     res.send({ mas: "Something went wrong", error: true });
   }
