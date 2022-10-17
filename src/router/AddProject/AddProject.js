@@ -11,7 +11,8 @@ router.post("/add_project", auth, async (req, res) => {
 
   // if (users.length === 0)
   //   res.send({ msg: "Please add at least one user", error: true });
-
+  let t = String(req.user._id).split('"');
+  let newUsers = [...[{ user: t[0] }], ...users];
   req.user.password = undefined;
   const today = new Date();
   var date = parseInt(
@@ -21,7 +22,7 @@ router.post("/add_project", auth, async (req, res) => {
     `${today.getHours()}${today.getMinutes()}${today.getSeconds()}`
   );
   const newSchema = await new AddProjectSchema({
-    users,
+    users: newUsers,
     project_name,
     created_date: date,
     created_time: time,
@@ -70,13 +71,11 @@ router.put("/comments", auth, async (req, res) => {
 });
 
 router.put("/add_member", auth, async (req, res) => {
-  let t = String(req.user._id).split('"');
-
   const { users, projectId } = req.body;
-  let newUsers = [...[{ user: t[0] }], ...users];
+
   AddProjectSchema.findByIdAndUpdate(
     projectId,
-    { $push: { users: newUsers } },
+    { $push: { users: users } },
     { new: true }
   )
     .populate("users.user", "_id name")
