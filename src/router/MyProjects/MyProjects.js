@@ -5,7 +5,10 @@ const router = express.Router();
 
 router.post("/my_projects", auth, async (req, res) => {
   const data = await AddProjectSchema.find({
-    $or: [{ postedBy: req.user._id }, { "users.user": req.user._id }],
+    $or: [
+      { postedBy: req.user._id },
+      { users: { $elemMatch: { user: req.user._id, accepted: true } } },
+    ],
   })
     .populate("postedBy", "_id name")
     .populate("users.user", "_id name");

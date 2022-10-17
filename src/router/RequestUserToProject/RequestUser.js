@@ -1,16 +1,14 @@
 const express = require("express");
 const router = express.Router();
-const projectSchema = require("../../schema/projectSchema");
+const AddProjectSchema = require("../../schema/projectSchema");
 const auth = require("../../middleware/authenticate");
-const AddProjectSchema = require("../../schema/RequestSchema");
+const projectSchema = require("../../schema/RequestSchema");
 
 router.post("/requests", auth, async (req, res) => {
   try {
-    const data = await projectSchema
-      .find({
-        $and: [{ "users.user": req.user._id }, { "users.accepted": false }],
-      })
-      .populate("users.user", "name");
+    const data = await AddProjectSchema.find({
+      users: { $elemMatch: { user: req.user._id, accepted: false } },
+    }).populate("users.user", "name");
     const newSchema = await new AddProjectSchema({
       notification_data: data,
     });
@@ -26,6 +24,25 @@ router.post("/requests", auth, async (req, res) => {
     // });
   } catch (error) {
     return res.send({ error });
+  }
+});
+
+router.put("/accept", auth, async (req, res) => {
+  try {
+    const { accept, id } = req.body;
+    AddProjectSchema.updateOne(
+      {
+        "users._id": id,
+      },
+      { $set: { "users.$.accepted": accept } }
+    ).exec((result, err) => {
+      if (err) {
+        return res.json({ error: err });
+      }
+      return res.json(result);
+    });
+  } catch (error) {
+    res.send({ mas: "Something went wrong", error: true });
   }
 });
 
