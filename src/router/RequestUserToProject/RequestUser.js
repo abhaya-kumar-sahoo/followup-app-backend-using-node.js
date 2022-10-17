@@ -35,17 +35,17 @@ router.put("/accept", auth, async (req, res) => {
         "users._id": id,
       },
       { $set: { "users.$.accepted": accept } }
-    );
-
-    const users = [{ user: req.user._id }];
-    AddProjectSchema.findByIdAndUpdate(
-      projectId,
-      { $push: { users: users } },
-      { new: true }
     )
-      .populate("users.user", "_id name")
-      .populate("comments.postedBy", "_id name")
-      .populate("postedBy", "_id name")
+
+      // const users = [{ user: req.user._id }];
+      // AddProjectSchema.findByIdAndUpdate(
+      //   projectId,
+      //   { $push: { users: users } },
+      //   { new: true }
+      // )
+      //   .populate("users.user", "_id name")
+      //   .populate("comments.postedBy", "_id name")
+      //   .populate("postedBy", "_id name")
       .exec((err, result) => {
         if (err) {
           return res.json({ error: err });
