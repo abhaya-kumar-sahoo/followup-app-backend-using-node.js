@@ -136,9 +136,9 @@ router.post("/all_members", auth, async (req, res) => {
   }
 });
 
-router.post("/all_users", async (req, res) => {
+router.post("/all_users", auth, async (req, res) => {
   try {
-    const data = await User.find().select({
+    const data = await User.find({ _id: { $ne: req.user._id } }).select({
       name: 1,
       selected: 1,
       isAdmin: 1,
