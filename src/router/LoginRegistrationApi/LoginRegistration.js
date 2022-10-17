@@ -6,6 +6,7 @@ const validator = require("email-validator");
 const User = require("../../schema/schema");
 const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
+const auth = require("../../middleware/authenticate");
 const otp = Math.floor(Math.random() * 10000);
 router.post("/registration", async (req, res) => {
   require("dotenv").config({ path: __dirname + "../../.env" });
@@ -112,9 +113,36 @@ router.post("/user_exist", async (req, res) => {
   }
 });
 
+router.post("/all_members", auth, async (req, res) => {
+  try {
+    const { users } = req.body;
+    const data = await User.find({
+      _id: { $nin: users },
+    }).select({
+      name: 1,
+      selected: 1,
+      isAdmin: 1,
+    });
+    if (data)
+      return res.send({
+        msg: "Success",
+        error: true,
+        data,
+      });
+    return res.send({ msg: "Something went wrong", error: true, data: [] });
+  } catch (error) {
+    console.log("error", error);
+    res.send({ msg: error, error: true });
+  }
+});
+
 router.post("/all_users", async (req, res) => {
   try {
-    const data = await User.find().select({ name: 1, selected: 1, isAdmin: 1 });
+    const data = await User.find().select({
+      name: 1,
+      selected: 1,
+      isAdmin: 1,
+    });
     if (data)
       return res.send({
         msg: "Success",
