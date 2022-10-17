@@ -10,6 +10,7 @@ const Reports = require("./src/router/Reports/Reports");
 const Posts = require("./src/router/Post/Post");
 const MyProjects = require("./src/router/MyProjects/MyProjects");
 const ProjectMembers = require("./src/router/ProjectMemober/ProjectMemobers");
+const RequestUsers = require("./src/router/RequestUserToProject/RequestUser");
 
 dotenv.config();
 
@@ -34,6 +35,8 @@ app.use("", Reports);
 app.use("", Posts);
 
 app.use("", ProjectMembers);
+
+app.use("", RequestUsers);
 
 app.get("/", (req, res) => {
   return res.send({ msg: "Home Page of Followup App" });
