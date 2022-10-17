@@ -10,6 +10,7 @@ const AddProjectSchema = new mongoose.Schema(
           type: ObjectId,
           ref: "Registration",
         },
+        isAdmin: { type: Boolean, default: false },
       },
     ],
     created_date: {

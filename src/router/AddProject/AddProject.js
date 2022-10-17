@@ -12,7 +12,7 @@ router.post("/add_project", auth, async (req, res) => {
   // if (users.length === 0)
   //   res.send({ msg: "Please add at least one user", error: true });
   let t = String(req.user._id).split('"');
-  let newUsers = [...[{ user: t[0] }], ...users];
+  let newUsers = [...[{ user: t[0], isAdmin: true }], ...users];
   req.user.password = undefined;
   const today = new Date();
   var date = parseInt(
