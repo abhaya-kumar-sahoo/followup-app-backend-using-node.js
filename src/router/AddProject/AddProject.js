@@ -6,8 +6,8 @@ const router = express.Router();
 router.post("/add_project", auth, async (req, res) => {
   const { project_name, users } = req.body;
 
-  if (!project_name || !users)
-    res.send({ msg: "Project name or users have not added", error: true });
+  if (!project_name)
+    res.send({ msg: "Project name have not added", error: true });
 
   // if (users.length === 0)
   //   res.send({ msg: "Please add at least one user", error: true });
