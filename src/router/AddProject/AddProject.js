@@ -70,11 +70,13 @@ router.put("/comments", auth, async (req, res) => {
 });
 
 router.put("/add_member", auth, async (req, res) => {
-  const { users, projectId } = req.body;
+  let t = String(req.user._id).split('"');
 
+  const { users, projectId } = req.body;
+  let newUsers = [...[{ user: t[0] }], ...users];
   AddProjectSchema.findByIdAndUpdate(
     projectId,
-    { $push: { users: users } },
+    { $push: { users: newUsers } },
     { new: true }
   )
     .populate("users.user", "_id name")
