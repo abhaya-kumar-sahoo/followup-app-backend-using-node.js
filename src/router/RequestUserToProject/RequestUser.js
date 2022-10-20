@@ -30,30 +30,42 @@ router.post("/requests", auth, async (req, res) => {
 router.put("/accept", auth, async (req, res) => {
   try {
     const { accept, id, projectId } = req.body;
-    const data = await AddProjectSchema.updateOne(
-      {
-        "users._id": id,
-      },
-      { $set: { "users.$.accepted": accept } }
-    )
 
-      // const users = [{ user: req.user._id }];
-      // AddProjectSchema.findByIdAndUpdate(
-      //   projectId,
-      //   { $push: { users: users } },
-      //   { new: true }
-      // )
-      //   .populate("users.user", "_id name")
-      //   .populate("comments.postedBy", "_id name")
-      //   .populate("postedBy", "_id name")
-      .exec((err, result) => {
+    if (accept) {
+      const data = await AddProjectSchema.updateOne(
+        {
+          "users._id": id,
+        },
+        { $set: { "users.$.accepted": accept } }
+      ).exec((err, result) => {
         if (err) {
-          return res.json({ error: err });
+          return res.json({ msg: err, error: true, data: [] });
         }
-        return res.json(result);
+        return res.json({
+          error: false,
+          data: result,
+          msg: "Successfully Accepted",
+        });
       });
+    } else {
+      const data = await AddProjectSchema.updateOne(
+        {
+          "users._id": id,
+        },
+        { $pull: { users: { _id: id } } }
+      ).exec((err, result) => {
+        if (err) {
+          return res.json({ msg: err, error: true, data: [] });
+        }
+        return res.json({
+          msg: "Delete Successful",
+          data: result,
+          error: false,
+        });
+      });
+    }
   } catch (error) {
-    res.send({ mas: "Something went wrong", error: true });
+    res.send({ mas: "Something went wrong", error: true, data: [] });
   }
 });
 
