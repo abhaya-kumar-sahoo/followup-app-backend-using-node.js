@@ -2,8 +2,17 @@ const mongoose = require("mongoose");
 const { ObjectId } = mongoose.Schema.Types;
 const PostSchema = new mongoose.Schema(
   {
-    title: String,
-    description: String,
+    title: {
+      type: String,
+      default: "",
+    },
+    project_id: {
+      type: String,
+    },
+    description: {
+      type: String,
+      default: "",
+    },
     date: String,
     postedBy: {
       type: ObjectId,
