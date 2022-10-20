@@ -156,7 +156,7 @@ router.post("/all_users", auth, async (req, res) => {
   }
 });
 
-router.post("/get_user_details", auth, async (req, res) => {
+router.post("/get_user", auth, async (req, res) => {
   return res.send({
     msg: "Successful",
     data: req.user,
