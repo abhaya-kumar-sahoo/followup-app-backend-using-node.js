@@ -41,7 +41,12 @@ router.post("/add_posts", auth, async (req, res) => {
       {
         _id: isUser[0]._id,
       },
-      { $push: { project_comments: newdata } },
+      {
+        $push: {
+          project_comments: newdata,
+        },
+        $set: { created_date: date, created_time: time },
+      },
 
       { new: true }
     )
