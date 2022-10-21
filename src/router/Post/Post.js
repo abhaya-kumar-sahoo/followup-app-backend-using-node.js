@@ -22,14 +22,6 @@ router.post("/add_posts", auth, async (req, res) => {
     created_time: time,
   };
   if (isUser.length === 0) {
-    req.user.password = undefined;
-    req.user.selected = undefined;
-    req.user.isAdmin = undefined;
-    req.user.createdAt = undefined;
-    req.user.updatedAt = undefined;
-    req.user.__v = undefined;
-    req.user.updatedAt = undefined;
-
     const data = new PostSchema({
       project_comments: [newdata],
       postedBy: req.user,
@@ -45,9 +37,9 @@ router.post("/add_posts", auth, async (req, res) => {
       return res.send({ msg: "Successful", data: result, error: false });
     });
   } else {
-    PostSchema.updateOne(
+    PostSchema.findByIdAndUpdate(
       {
-        postedBy: req.user._id,
+        _id: isUser[0]._id,
       },
       { $push: { project_comments: newdata } },
 
