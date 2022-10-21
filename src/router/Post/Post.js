@@ -57,13 +57,15 @@ router.post("/add_posts", auth, async (req, res) => {
 
 router.post("/get_posts", auth, async (req, res) => {
   try {
-    const { project_id } = req.body;
+    const { project_id, date } = req.body;
 
     if (!project_id) {
       return res.send({ msg: "'project_id' required", data: [], error: true });
     }
 
-    await PostSchema.find({ project_id })
+    await PostSchema.find({
+      $and: [{ project_id }, { created_date: date }],
+    })
       .populate("postedBy", "name _id")
       .exec((err, result) => {
         if (err) {
