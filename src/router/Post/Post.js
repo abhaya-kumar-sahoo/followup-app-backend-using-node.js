@@ -86,14 +86,19 @@ router.post("/update_comments", auth, async (req, res) => {
       },
 
       { new: true }
-    )
-      .populate("postedBy", "name _id")
-      .exec((err, result) => {
-        if (err) {
-          return res.send({ msg: err, data: [], error: true });
-        }
-        return res.send({ msg: "Successful", data: result, error: false });
-      });
+    ).exec((err, result) => {
+      if (err) {
+        return res.send({ msg: err, data: [], error: true });
+      }
+      PostSchema.find({ postedBy: req.user._id })
+        .populate("postedBy", "name _id")
+        .exec((err, result) => {
+          if (err) {
+            return res.send({ msg: err, data: [], error: true });
+          }
+          return res.send({ msg: "Successful", data: result, error: false });
+        });
+    });
   } catch (error) {
     return res.send({ msg: error, error: true, data: [] });
   }
