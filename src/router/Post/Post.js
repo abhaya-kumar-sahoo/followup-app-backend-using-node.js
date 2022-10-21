@@ -58,6 +58,11 @@ router.post("/add_posts", auth, async (req, res) => {
 router.post("/get_posts", auth, async (req, res) => {
   try {
     const { project_id } = req.body;
+
+    if (!project_id) {
+      return res.send({ msg: "'project_id' required", data: [], error: true });
+    }
+
     await PostSchema.find({ project_id })
       .populate("postedBy", "name _id")
       .exec((err, result) => {
@@ -73,7 +78,24 @@ router.post("/get_posts", auth, async (req, res) => {
 
 router.post("/update_comments", auth, async (req, res) => {
   try {
-    const { comment_id, title, description } = req.body;
+    const { comment_id, title, description, user_id } = req.body;
+
+    if (!comment_id || !title || !user_id) {
+      return res.send({
+        msg: "Please check all the field *{comment_id, title, user_id}",
+        data: [],
+        error: true,
+      });
+    }
+    let s = String(req.user._id).split('"');
+
+    if (user_id !== s) {
+      return res.send({
+        msg: "you can not update others comments",
+        data: [],
+        error: true,
+      });
+    }
     PostSchema.updateOne(
       {
         "project_comments._id": comment_id,
