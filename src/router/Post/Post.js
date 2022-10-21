@@ -44,12 +44,14 @@ router.post("/add_posts", auth, async (req, res) => {
       { $push: { project_comments: newdata } },
 
       { new: true }
-    ).exec((err, result) => {
-      if (err) {
-        return res.send({ msg: err, data: [], error: true });
-      }
-      return res.send({ msg: "Successful", data: result, error: false });
-    });
+    )
+      .populate("postedBy", "name _id")
+      .exec((err, result) => {
+        if (err) {
+          return res.send({ msg: err, data: [], error: true });
+        }
+        return res.send({ msg: "Successful", data: result, error: false });
+      });
   }
 });
 
@@ -66,6 +68,34 @@ router.post("/get_posts", auth, async (req, res) => {
       });
   } catch (error) {
     return res.send({ msg: "Some getting wrong", error: true, data: [] });
+  }
+});
+
+router.post("/update_comments", auth, async (req, res) => {
+  try {
+    const { comment_id, title, description } = req.body;
+    PostSchema.updateOne(
+      {
+        "project_comments._id": comment_id,
+      },
+      {
+        $set: {
+          "project_comments.$.description": description,
+          "project_comments.$.title": title,
+        },
+      },
+
+      { new: true }
+    )
+      .populate("postedBy", "name _id")
+      .exec((err, result) => {
+        if (err) {
+          return res.send({ msg: err, data: [], error: true });
+        }
+        return res.send({ msg: "Successful", data: result, error: false });
+      });
+  } catch (error) {
+    return res.send({ msg: error, error: true, data: [] });
   }
 });
 
