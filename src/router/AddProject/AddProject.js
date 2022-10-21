@@ -30,11 +30,14 @@ router.post("/add_project", auth, async (req, res) => {
   });
   let modData;
   await newSchema.save(async (err, result) => {
-    if (err === null) modData = await result.populate("users.user", "name");
-    return res.send({
-      data: modData,
-      error: false,
-    });
+    if (err === null) {
+      modData = await result.populate("users.user", "name");
+      return res.send({
+        data: modData,
+        error: false,
+      });
+    }
+
     return res.send({ error: true, data: [], errorText: err });
   });
 });
