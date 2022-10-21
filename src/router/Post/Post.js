@@ -96,7 +96,7 @@ router.post("/update_comments", auth, async (req, res) => {
     }
     let s = String(req.user._id).split('"');
 
-    if (user_id !== s) {
+    if (user_id !== s[0]) {
       return res.send({
         msg: "you can not update others comments",
         data: [],
