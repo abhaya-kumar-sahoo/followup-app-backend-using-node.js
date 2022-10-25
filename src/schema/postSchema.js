@@ -19,12 +19,10 @@ const PostSchema = new mongoose.Schema({
         default: "",
       },
       created_date: {
-        type: Number,
-        default: date,
+        type: Object,
       },
       created_time: {
-        type: Number,
-        date: time,
+        type: Object,
       },
     },
   ],
@@ -32,12 +30,10 @@ const PostSchema = new mongoose.Schema({
     type: String,
   },
   created_date: {
-    type: Number,
-    default: date,
+    type: Object,
   },
   created_time: {
-    type: Number,
-    date: time,
+    type: Object,
   },
   postedBy: {
     type: ObjectId,

@@ -18,8 +18,16 @@ router.post("/add_posts", auth, async (req, res) => {
   const isUser = await PostSchema.find({ postedBy: req.user._id });
   let newdata = {
     ...project_comments[0],
-    created_date: date,
-    created_time: time,
+    created_date: {
+      year: parseInt(date.toString().slice(0, 4)),
+      month: parseInt(date.toString().slice(4, 6)),
+      day: parseInt(date.toString().slice(6, 8)),
+    },
+    created_time: {
+      hr: parseInt(today.getHours()),
+      min: parseInt(today.getMinutes()),
+      sec: parseInt(today.getSeconds()),
+    },
   };
   if (isUser.length === 0) {
     const data = new PostSchema({
@@ -68,9 +76,12 @@ router.post("/get_posts", auth, async (req, res) => {
       return res.send({ msg: "'project_id' required", data: [], error: true });
     }
 
-    await PostSchema.find({
-      $and: [{ project_id }, { created_date: date }],
-    })
+    await PostSchema.find(
+      {
+        $and: [{ project_id }, { "project_comments.created_date": date }],
+      }
+      // { project_comments: { $elemMatch: { created_date: date } } }
+    )
       .populate("postedBy", "name _id")
       .exec((err, result) => {
         if (err) {

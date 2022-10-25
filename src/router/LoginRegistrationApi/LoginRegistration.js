@@ -8,31 +8,9 @@ const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
 const auth = require("../../middleware/authenticate");
 const otp = Math.floor(Math.random() * 10000);
+
 router.post("/registration", async (req, res) => {
   require("dotenv").config({ path: __dirname + "../../.env" });
-
-  // var transporter = nodemailer.createTransport({
-  //   service: "gmail",
-  //   auth: {
-  //     user: process.env.EMAIL_NAME,
-  //     pass: process.env.EMAIL_PASS,
-  //   },
-  // });
-
-  // var mailOptions = {
-  //   from: "abhayasahoolk@gmail.com",
-  //   to: "abhayasahooab1234@gmail.com",
-  //   subject: "Follow Up App Email Verification",
-  //   text: `This is the unique code that is required during registration process \n\n Verification code: ${otp} `,
-  // };
-
-  // transporter.sendMail(mailOptions, function (error, info) {
-  //   if (error) {
-  //     console.log(error);
-  //   } else {
-  //     console.log("Email sent: " + info.response);
-  //   }
-  // });
 
   let jwtSecretKey = process.env.JWT_SECRET_KEY;
   try {
@@ -67,9 +45,27 @@ router.post("/registration", async (req, res) => {
     }
     const hashPsw = await bcrypt.hash(password, 10);
 
+    const today = new Date();
+    var date = parseInt(
+      new Date().toJSON().slice(0, 10).replace("-", "").replace("-", "")
+    );
+    var time = parseInt(
+      `${today.getHours()}${today.getMinutes()}${today.getSeconds()}`
+    );
+
     const data = await new User({
       name,
       password: hashPsw,
+      created_date: {
+        year: parseInt(date.toString().slice(0, 4)),
+        month: parseInt(date.toString().slice(4, 6)),
+        day: parseInt(date.toString().slice(6, 8)),
+      },
+      created_time: {
+        hr: parseInt(today.getHours()),
+        min: parseInt(today.getMinutes()),
+        sec: parseInt(today.getSeconds()),
+      },
     });
     await data.save((err, result) => {
       return res.send({ data: result, error: false });

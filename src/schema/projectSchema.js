@@ -18,10 +18,10 @@ const AddProjectSchema = new mongoose.Schema(
       },
     ],
     created_date: {
-      type: Number,
+      type: Object,
     },
     created_time: {
-      type: Number,
+      type: Object,
     },
     comments: [
       {

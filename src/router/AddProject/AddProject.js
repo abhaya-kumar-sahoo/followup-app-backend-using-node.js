@@ -24,8 +24,16 @@ router.post("/add_project", auth, async (req, res) => {
   const newSchema = await new AddProjectSchema({
     users: newUsers,
     project_name,
-    created_date: date,
-    created_time: time,
+    created_date: {
+      year: parseInt(date.toString().slice(0, 4)),
+      month: parseInt(date.toString().slice(4, 6)),
+      day: parseInt(date.toString().slice(6, 8)),
+    },
+    created_time: {
+      hr: parseInt(today.getHours()),
+      min: parseInt(today.getMinutes()),
+      sec: parseInt(today.getSeconds()),
+    },
     postedBy: req.user,
   });
   let modData;
