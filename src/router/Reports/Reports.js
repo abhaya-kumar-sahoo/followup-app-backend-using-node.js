@@ -27,14 +27,25 @@ router.post("/comments_by_date", auth, async (req, res) => {
     {
       $match: {
         $and: [
-          { "project_comments.created_date": { $gte: date } },
-          { "project_comments.created_date": { $lte: date + 31 } },
+          { "project_comments.created_date.year": date.year },
+          { "project_comments.created_date.month": date.month },
+          { "project_comments.created_date.day": { $gte: date.day } },
+          { "project_comments.created_date.day": { $lte: date.day + 31 } },
         ],
       },
     },
-  ]);
-
-  return res.send({ msg: "Successful", data });
+  ]).exec((err, result) => {
+    if (err) {
+      return res.send({ msg: err, data: [], error: true });
+    }
+    PostSchema.populate(
+      result,
+      { path: "postedBy", select: "name" },
+      (err, res1) => {
+        return res.send({ msg: "Successful", data: res1, error: false });
+      }
+    );
+  });
 });
 
 const Reports = router;
