@@ -15,7 +15,22 @@ router.post("/add_posts", auth, async (req, res) => {
   var time = parseInt(
     `${today.getHours()}${today.getMinutes()}${today.getSeconds()}`
   );
-  const isUser = await PostSchema.find({ postedBy: req.user._id });
+
+  const currentDate = {
+    day: parseInt(date.toString().slice(6, 8)),
+    month: parseInt(date.toString().slice(4, 6)),
+    year: parseInt(date.toString().slice(0, 4)),
+  };
+
+  const isUser = await PostSchema.findOne({
+    $and: [
+      { postedBy: req.user._id },
+      { "created_date.day": currentDate.day },
+      { "created_date.month": currentDate.month },
+      { "created_date.year": currentDate.year },
+    ],
+  });
+  // console.log(isUser);
   let newdata = {
     ...project_comments[0],
     created_date: {
@@ -29,7 +44,8 @@ router.post("/add_posts", auth, async (req, res) => {
       sec: parseInt(today.getSeconds()),
     },
   };
-  if (isUser.length === 0) {
+
+  if (isUser === null) {
     const data = new PostSchema({
       project_comments: [newdata],
       postedBy: req.user,
@@ -52,10 +68,14 @@ router.post("/add_posts", auth, async (req, res) => {
       }
       return res.send({ msg: "Successful", data: result, error: false });
     });
-  } else {
+  } else if (
+    isUser.created_date.day == currentDate.day &&
+    isUser.created_date.year == currentDate.year &&
+    isUser.created_date.month == currentDate.month
+  ) {
     PostSchema.findByIdAndUpdate(
       {
-        _id: isUser[0]._id,
+        _id: isUser._id,
       },
       {
         $push: {
@@ -63,7 +83,6 @@ router.post("/add_posts", auth, async (req, res) => {
         },
         $set: { created_date: date, created_time: time },
       },
-
       { new: true }
     )
       .populate("postedBy", "name _id")
@@ -73,6 +92,29 @@ router.post("/add_posts", auth, async (req, res) => {
         }
         return res.send({ msg: "Successful", data: result, error: false });
       });
+  } else {
+    const data = new PostSchema({
+      project_comments: [newdata],
+      postedBy: req.user,
+      project_id,
+      created_date: {
+        year: parseInt(date.toString().slice(0, 4)),
+        month: parseInt(date.toString().slice(4, 6)),
+        day: parseInt(date.toString().slice(6, 8)),
+      },
+      created_time: {
+        hr: parseInt(today.getHours()),
+        min: parseInt(today.getMinutes()),
+        sec: parseInt(today.getSeconds()),
+      },
+    });
+
+    await data.save((err, result) => {
+      if (err) {
+        return res.send({ msg: err, data: [], error: true });
+      }
+      return res.send({ msg: "Successful", data: result, error: false });
+    });
   }
 });
 
