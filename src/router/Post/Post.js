@@ -76,7 +76,7 @@ router.post("/add_posts", auth, async (req, res) => {
   }
 });
 
-router.post("/get_posts", async (req, res) => {
+router.post("/get_posts", auth, async (req, res) => {
   try {
     const { project_id, date } = req.body;
 

@@ -6,13 +6,12 @@ const PostSchema = require("../../schema/postSchema");
 router.post("/project_dates", auth, async (req, res) => {
   const { project_id } = req.body;
 
-  const data = await PostSchema.find({ project_id }).select({
-    "project_comments.created_date": 1,
-  });
-  // .distinct("project_comments.created_date");
-  // .select({
-  //   created_date: 1,
-  // })
+  const data = await PostSchema.find({ project_id })
+    .select({
+      "project_comments.created_date": 1,
+    })
+    .distinct("project_comments.created_date")
+    .sort();
 
   return res.send({ msg: "Successful", data, error: false });
 });
