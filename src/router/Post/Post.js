@@ -34,8 +34,16 @@ router.post("/add_posts", auth, async (req, res) => {
       project_comments: [newdata],
       postedBy: req.user,
       project_id,
-      created_date: date,
-      created_time: time,
+      created_date: {
+        year: parseInt(date.toString().slice(0, 4)),
+        month: parseInt(date.toString().slice(4, 6)),
+        day: parseInt(date.toString().slice(6, 8)),
+      },
+      created_time: {
+        hr: parseInt(today.getHours()),
+        min: parseInt(today.getMinutes()),
+        sec: parseInt(today.getSeconds()),
+      },
     });
 
     await data.save((err, result) => {
@@ -68,7 +76,7 @@ router.post("/add_posts", auth, async (req, res) => {
   }
 });
 
-router.post("/get_posts", auth, async (req, res) => {
+router.post("/get_posts", async (req, res) => {
   try {
     const { project_id, date } = req.body;
 
@@ -78,7 +86,12 @@ router.post("/get_posts", auth, async (req, res) => {
 
     await PostSchema.find(
       {
-        $and: [{ project_id }, { "project_comments.created_date": date }],
+        $and: [
+          { project_id },
+          { "project_comments.created_date.year": date.year },
+          { "project_comments.created_date.month": date.month },
+          { "project_comments.created_date.day": date.day },
+        ],
       }
       // { project_comments: { $elemMatch: { created_date: date } } }
     )
