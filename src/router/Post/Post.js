@@ -21,7 +21,11 @@ router.post("/add_posts", auth, async (req, res) => {
     month: parseInt(date.toString().slice(4, 6)),
     year: parseInt(date.toString().slice(0, 4)),
   };
-
+  const currentTime = {
+    hr: parseInt(today.getHours()),
+    min: parseInt(today.getMinutes()),
+    sec: parseInt(today.getSeconds()),
+  };
   const isUser = await PostSchema.findOne({
     $and: [
       { postedBy: req.user._id },
@@ -33,16 +37,8 @@ router.post("/add_posts", auth, async (req, res) => {
   // console.log(isUser);
   let newdata = {
     ...project_comments[0],
-    created_date: {
-      year: parseInt(date.toString().slice(0, 4)),
-      month: parseInt(date.toString().slice(4, 6)),
-      day: parseInt(date.toString().slice(6, 8)),
-    },
-    created_time: {
-      hr: parseInt(today.getHours()),
-      min: parseInt(today.getMinutes()),
-      sec: parseInt(today.getSeconds()),
-    },
+    created_date: currentDate,
+    created_time: currentTime,
   };
 
   if (isUser === null) {
@@ -81,7 +77,7 @@ router.post("/add_posts", auth, async (req, res) => {
         $push: {
           project_comments: newdata,
         },
-        $set: { created_date: date, created_time: time },
+        $set: { created_date: currentDate, created_time: currentTime },
       },
       { new: true }
     )
@@ -97,16 +93,8 @@ router.post("/add_posts", auth, async (req, res) => {
       project_comments: [newdata],
       postedBy: req.user,
       project_id,
-      created_date: {
-        year: parseInt(date.toString().slice(0, 4)),
-        month: parseInt(date.toString().slice(4, 6)),
-        day: parseInt(date.toString().slice(6, 8)),
-      },
-      created_time: {
-        hr: parseInt(today.getHours()),
-        min: parseInt(today.getMinutes()),
-        sec: parseInt(today.getSeconds()),
-      },
+      created_date: currentDate,
+      created_time: currentTime,
     });
 
     await data.save((err, result) => {
