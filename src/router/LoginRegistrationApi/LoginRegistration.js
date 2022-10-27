@@ -111,9 +111,13 @@ router.post("/user_exist", async (req, res) => {
 
 router.post("/all_members", auth, async (req, res) => {
   try {
-    const { users } = req.body;
+    const { users, text } = req.body;
+    const test = text.replace('"', "/");
     const data = await User.find({
-      _id: { $nin: users },
+      $and: [
+        { _id: { $nin: users } },
+        { name: { $regex: test, $options: "i" } },
+      ],
     }).select({
       name: 1,
       selected: 1,
