@@ -139,7 +139,7 @@ router.post("/get_posts", auth, async (req, res) => {
 
 router.post("/update_comments", auth, async (req, res) => {
   try {
-    const { comment_id, title, description, user_id } = req.body;
+    const { comment_id, title, description, user_id, isCompleted } = req.body;
 
     if (!comment_id || !title || !user_id) {
       return res.send({
@@ -165,6 +165,7 @@ router.post("/update_comments", auth, async (req, res) => {
         $set: {
           "project_comments.$.description": description,
           "project_comments.$.title": title,
+          "project_comments.$.isCompleted": isCompleted,
         },
       },
 

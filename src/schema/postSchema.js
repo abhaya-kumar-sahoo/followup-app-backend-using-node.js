@@ -24,6 +24,10 @@ const PostSchema = new mongoose.Schema({
       created_time: {
         type: Object,
       },
+      isCompleted: {
+        type: Boolean,
+        default: false,
+      },
     },
   ],
   project_id: {
