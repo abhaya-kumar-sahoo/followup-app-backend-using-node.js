@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 const validator = require("email-validator");
-
+//https://followup-back.herokuapp.com
 const User = require("../../schema/schema");
 const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
@@ -26,7 +26,7 @@ router.post("/test", upload.single("image"), async (req, res) => {
   return res.send({
     data: {
       name: req.body.name,
-      image: req.file ? url + "/public" + req.file.filename : null,
+      image: req.file ? url + "/public/" + req.file.filename : null,
     },
     error: false,
   });
@@ -85,7 +85,7 @@ router.post("/registration", upload.single("image"), async (req, res) => {
 
     const data = await new User({
       name,
-      image: req.file ? url + "/public" + req.file.filename : null,
+      image: req.file ? url + "/public/" + req.file.filename : null,
 
       password: hashPsw,
       created_date: {
