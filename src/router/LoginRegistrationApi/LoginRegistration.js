@@ -21,7 +21,6 @@ const storage = multer.diskStorage({
 const upload = multer({ storage }).single("image");
 
 router.post("/registration", upload, async (req, res) => {
-  console.log(req.file);
   require("dotenv").config({ path: __dirname + "../../.env" });
   const url = req.protocol + "://" + req.get("host");
 
