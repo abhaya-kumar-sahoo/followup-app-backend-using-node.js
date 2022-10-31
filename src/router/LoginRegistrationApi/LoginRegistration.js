@@ -50,13 +50,13 @@ router.post("/registration", upload.single("image"), async (req, res) => {
     // const isEmail = await validator.validate(email);
 
     // if (!isEmail) return res.send({ msg: "Invalid email id" });
-    return res.send({ msg: req.body });
-    // if (!name || !password || !cPassword) {
-    //   return res.send({
-    //     msg: "Please fill all field",
-    //     error: true,
-    //   });
-    // }
+
+    if (!name || !password || !cPassword) {
+      return res.send({
+        msg: "Please fill all field",
+        error: true,
+      });
+    }
 
     const user = await User.findOne({ name });
     if (user) {
