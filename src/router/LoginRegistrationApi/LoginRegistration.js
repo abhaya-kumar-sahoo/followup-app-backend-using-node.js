@@ -12,7 +12,7 @@ const multer = require("multer");
 const fs = require("fs");
 const storage = multer.diskStorage({
   destination(req, file, cb) {
-    cb(null, "src/asset");
+    cb(null, "public");
   },
   filename(req, file, cb) {
     cb(null, new Date().toString() + file.originalname);
@@ -25,7 +25,7 @@ router.post("/upload", upload.single("image"), async (req, res) => {
 
   const data = await new User({
     name: req.body.name,
-    image: url + "/src/asset/" + req.file.filename,
+    image: url + "/public" + req.file.filename,
     // image: {
     //   data: fs.readFileSync("src/asset/" + req.file.filename),
     //   contentType: "image/jpeg",
@@ -87,7 +87,7 @@ router.post("/registration", upload.single("image"), async (req, res) => {
 
     const data = await new User({
       name,
-      image: url + "/src/asset/" + req.file.filename,
+      image: url + "/public/" + req.file.filename,
 
       password: hashPsw,
       created_date: {
