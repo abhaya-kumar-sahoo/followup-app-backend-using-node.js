@@ -20,24 +20,22 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-router.post("/upload", upload.single("image"), async (req, res) => {
+router.post("/test", upload.single("image"), async (req, res) => {
   const url = req.protocol + "://" + req.get("host");
 
-  const data = await new User({
-    name: req.body.name,
-    image: url + "/public" + req.file.filename,
-    // image: {
-    //   data: fs.readFileSync("src/asset/" + req.file.filename),
-    //   contentType: "image/jpeg",
-    // }
+  return res.send({
+    data: {
+      name: req.body.name,
+      image: req.file ? url + "/public" + req.file.filename : null,
+    },
+    error: false,
   });
-
-  await data.save((err, result) => {
-    if (err) {
-      return res.send({ data: err, error: true });
-    }
-    return res.send({ data: result, error: false });
-  });
+  // await data.save((err, result) => {
+  //   if (err) {
+  //     return res.send({ data: err, error: true });
+  //   }
+  //   return res.send({ data: result, error: false });
+  // });
 });
 
 router.post("/registration", upload.single("image"), async (req, res) => {
@@ -87,7 +85,7 @@ router.post("/registration", upload.single("image"), async (req, res) => {
 
     const data = await new User({
       name,
-      image: url + "/public/" + req.file.filename,
+      image: req.file ? url + "/public" + req.file.filename : null,
 
       password: hashPsw,
       created_date: {
