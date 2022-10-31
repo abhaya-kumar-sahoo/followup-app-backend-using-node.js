@@ -18,29 +18,10 @@ const storage = multer.diskStorage({
     cb(null, new Date().toString() + file.originalname);
   },
 });
-const upload = multer({ storage });
+const upload = multer({ storage }).single("image");
 
-router.post("/upload", upload.single("image"), async (req, res) => {
-  const url = req.protocol + "://" + req.get("host");
-
-  const data = await new User({
-    name: req.body.name,
-    image: url + "/public" + req.file.filename,
-    // image: {
-    //   data: fs.readFileSync("src/asset/" + req.file.filename),
-    //   contentType: "image/jpeg",
-    // }
-  });
-
-  await data.save((err, result) => {
-    if (err) {
-      return res.send({ data: err, error: true });
-    }
-    return res.send({ data: result, error: false });
-  });
-});
-
-router.post("/registration", upload.single("image"), async (req, res) => {
+router.post("/registration", upload, async (req, res) => {
+  console.log(req.file);
   require("dotenv").config({ path: __dirname + "../../.env" });
   const url = req.protocol + "://" + req.get("host");
 
@@ -87,7 +68,7 @@ router.post("/registration", upload.single("image"), async (req, res) => {
 
     const data = await new User({
       name,
-      image: url + "/public/" + req.file.filename,
+      image: req.file ? url + "/public/" + req.file.filename : null,
 
       password: hashPsw,
       created_date: {
