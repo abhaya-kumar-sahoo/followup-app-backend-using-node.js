@@ -9,7 +9,7 @@ const nodemailer = require("nodemailer");
 const auth = require("../../middleware/authenticate");
 const otp = Math.floor(Math.random() * 10000);
 const multer = require("multer");
-const fs = require("fs");
+
 const storage = multer.diskStorage({
   destination(req, file, cb) {
     cb(null, "public");
@@ -18,9 +18,9 @@ const storage = multer.diskStorage({
     cb(null, new Date().toString() + file.originalname);
   },
 });
-const upload = multer({ storage });
+const upload = multer({ storage }).single("image");
 
-router.post("/test", upload.single("image"), async (req, res) => {
+router.post("/test", upload, async (req, res) => {
   const url = req.protocol + "://" + req.get("host");
 
   return res.send({
@@ -38,16 +38,13 @@ router.post("/test", upload.single("image"), async (req, res) => {
   // });
 });
 
-router.post("/registration", upload.single("image"), async (req, res) => {
+router.post("/registration", upload, async (req, res) => {
   require("dotenv").config({ path: __dirname + "../../.env" });
   const url = req.protocol + "://" + req.get("host");
 
   let jwtSecretKey = process.env.JWT_SECRET_KEY;
   try {
     const { name, password, cPassword } = req.body;
-    // const isEmail = await validator.validate(email);
-
-    // if (!isEmail) return res.send({ msg: "Invalid email id" });
 
     if (!name || !password || !cPassword) {
       return res.send({
