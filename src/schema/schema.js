@@ -3,12 +3,17 @@ const mongoose = require("mongoose");
 const userSchema = mongoose.Schema({
   name: {
     type: String,
-    required: true,
+    // required: true,
   },
-
+  image: {
+    // data: Buffer,
+    // contentType: String,
+    type: String,
+    default: null,
+  },
   password: {
     type: String,
-    required: true,
+    // required: true,
   },
   selected: {
     type: Boolean,

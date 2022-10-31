@@ -11,6 +11,7 @@ const Posts = require("./src/router/Post/Post");
 const MyProjects = require("./src/router/MyProjects/MyProjects");
 const ProjectMembers = require("./src/router/ProjectMember/ProjectMembers");
 const RequestUsers = require("./src/router/RequestUserToProject/RequestUser");
+const multer = require("multer");
 
 dotenv.config();
 

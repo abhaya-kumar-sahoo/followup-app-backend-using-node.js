@@ -8,9 +8,41 @@ const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
 const auth = require("../../middleware/authenticate");
 const otp = Math.floor(Math.random() * 10000);
+const multer = require("multer");
+const fs = require("fs");
+const storage = multer.diskStorage({
+  destination(req, file, cb) {
+    cb(null, "src/asset");
+  },
+  filename(req, file, cb) {
+    cb(null, new Date().toString() + file.originalname);
+  },
+});
+const upload = multer({ storage });
 
-router.post("/registration", async (req, res) => {
+router.post("/upload", upload.single("image"), async (req, res) => {
+  const url = req.protocol + "://" + req.get("host");
+
+  const data = await new User({
+    name: req.body.name,
+    image: url + "/src/asset/" + req.file.filename,
+    // image: {
+    //   data: fs.readFileSync("src/asset/" + req.file.filename),
+    //   contentType: "image/jpeg",
+    // }
+  });
+
+  await data.save((err, result) => {
+    if (err) {
+      return res.send({ data: err, error: true });
+    }
+    return res.send({ data: result, error: false });
+  });
+});
+
+router.post("/registration", upload.single("image"), async (req, res) => {
   require("dotenv").config({ path: __dirname + "../../.env" });
+  const url = req.protocol + "://" + req.get("host");
 
   let jwtSecretKey = process.env.JWT_SECRET_KEY;
   try {
@@ -55,6 +87,8 @@ router.post("/registration", async (req, res) => {
 
     const data = await new User({
       name,
+      image: url + "/src/asset/" + req.file.filename,
+
       password: hashPsw,
       created_date: {
         year: parseInt(date.toString().slice(0, 4)),
