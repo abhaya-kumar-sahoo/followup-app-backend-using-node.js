@@ -179,6 +179,7 @@ router.post("/all_users", auth, async (req, res) => {
       name: 1,
       selected: 1,
       isAdmin: 1,
+      image: 1,
     });
     if (data)
       return res.send({
