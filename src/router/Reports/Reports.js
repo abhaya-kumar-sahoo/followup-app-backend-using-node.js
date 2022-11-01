@@ -40,7 +40,7 @@ router.post("/comments_by_date", auth, async (req, res) => {
     }
     PostSchema.populate(
       result,
-      { path: "postedBy", select: "name" },
+      { path: "postedBy", select: "name image" },
       (err, res1) => {
         return res.send({ msg: "Successful", data: res1, error: false });
       }

@@ -10,8 +10,8 @@ router.post("/my_projects", auth, async (req, res) => {
       { users: { $elemMatch: { user: req.user._id, accepted: true } } },
     ],
   })
-    .populate("postedBy", "_id name")
-    .populate("users.user", "_id name");
+    .populate("postedBy", "_id name image")
+    .populate("users.user", "_id name image");
   if (data) {
     return res.send({ msg: "Success", data, error: false });
   }

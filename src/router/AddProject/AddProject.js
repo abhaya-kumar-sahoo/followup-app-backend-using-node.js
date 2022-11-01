@@ -39,7 +39,7 @@ router.post("/add_project", auth, async (req, res) => {
   let modData;
   await newSchema.save(async (err, result) => {
     if (err === null) {
-      modData = await result.populate("users.user", "name");
+      modData = await result.populate("users.user", "name image");
       return res.send({
         data: modData,
         error: false,
@@ -71,8 +71,8 @@ router.put("/comments", auth, async (req, res) => {
       new: true,
     }
   )
-    .populate("comments.postedBy", "_id name")
-    .populate("postedBy", "_id name")
+    .populate("comments.postedBy", "_id name image")
+    .populate("postedBy", "_id name image")
     .exec((err, result) => {
       if (err) {
         return res.json({ error: err });
@@ -89,9 +89,9 @@ router.put("/add_member", auth, async (req, res) => {
     { $push: { users: users } },
     { new: true }
   )
-    .populate("users.user", "_id name")
-    .populate("comments.postedBy", "_id name")
-    .populate("postedBy", "_id name")
+    .populate("users.user", "_id name image")
+    .populate("comments.postedBy", "_id name image")
+    .populate("postedBy", "_id name image")
     .exec((err, result) => {
       if (err) {
         return res.json({ error: err });

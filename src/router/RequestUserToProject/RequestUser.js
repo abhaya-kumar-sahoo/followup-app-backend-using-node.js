@@ -8,7 +8,7 @@ router.post("/requests", auth, async (req, res) => {
   try {
     const data = await AddProjectSchema.find({
       users: { $elemMatch: { user: req.user._id, accepted: false } },
-    }).populate("users.user", "name");
+    }).populate("users.user", "name image");
     const newSchema = await new AddProjectSchema({
       notification_data: data,
     });

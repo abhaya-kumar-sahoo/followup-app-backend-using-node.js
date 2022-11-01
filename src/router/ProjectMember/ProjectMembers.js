@@ -7,7 +7,7 @@ router.post("/project_members", async (req, res) => {
     const { id } = req.body;
     const data = await projectSchema
       .findById(id)
-      .populate("users.user", "_id name isAdmin");
+      .populate("users.user", "_id name isAdmin image");
     res.send({ users: data.users });
   } catch (error) {
     res.send({ msg: "Something went wrong", data: [], error: true });

@@ -81,7 +81,7 @@ router.post("/add_posts", auth, async (req, res) => {
       },
       { new: true }
     )
-      .populate("postedBy", "name _id")
+      .populate("postedBy", "name _id image")
       .exec((err, result) => {
         if (err) {
           return res.send({ msg: err, data: [], error: true });
@@ -125,7 +125,7 @@ router.post("/get_posts", auth, async (req, res) => {
       }
       // { project_comments: { $elemMatch: { created_date: date } } }
     )
-      .populate("postedBy", "name _id")
+      .populate("postedBy", "name _id image")
       .exec((err, result) => {
         if (err) {
           return res.send({ msg: err, data: [], error: true });
@@ -175,7 +175,7 @@ router.post("/update_comments", auth, async (req, res) => {
         return res.send({ msg: err, data: [], error: true });
       }
       PostSchema.find({ postedBy: req.user._id })
-        .populate("postedBy", "name _id")
+        .populate("postedBy", "name _id image")
         .exec((err, result) => {
           if (err) {
             return res.send({ msg: err, data: [], error: true });
