@@ -12,6 +12,7 @@ const MyProjects = require("./src/router/MyProjects/MyProjects");
 const ProjectMembers = require("./src/router/ProjectMember/ProjectMembers");
 const RequestUsers = require("./src/router/RequestUserToProject/RequestUser");
 const multer = require("multer");
+const ChatRoute = require("./src/router/Chat/Chat");
 
 dotenv.config();
 
@@ -38,6 +39,8 @@ app.use("", Posts);
 app.use("", ProjectMembers);
 
 app.use("", RequestUsers);
+
+app.use("", ChatRoute);
 
 app.get("/", (req, res) => {
   return res.send({ msg: "Home Page of Followup App" });
