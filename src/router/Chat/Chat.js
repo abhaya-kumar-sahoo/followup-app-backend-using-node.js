@@ -6,7 +6,10 @@ const router = express.Router();
 router.post("/get_chat", auth, async (req, res) => {
   const { text, project_id } = req.body;
 
-  const findOne = await ChatSchema.findOne({ project_id });
+  const findOne = await ChatSchema.findOne({ project_id }).populate(
+    "chats.postedBy",
+    "name _id image"
+  );
   return res.send({ msg: "Successful", data: findOne.chats });
 });
 router.post("/add_chat", auth, async (req, res) => {
