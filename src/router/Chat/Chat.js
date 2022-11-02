@@ -7,7 +7,7 @@ router.post("/get_chat", auth, async (req, res) => {
   const { text, project_id } = req.body;
 
   const findOne = await ChatSchema.findOne({ project_id });
-  return res.send({ msg: "Successful", data: findOne });
+  return res.send({ msg: "Successful", data: findOne.chats });
 });
 router.post("/add_chat", auth, async (req, res) => {
   const { text, project_id } = req.body;
@@ -44,16 +44,20 @@ router.post("/add_chat", auth, async (req, res) => {
       { $push: { chats: newChat } },
       { new: true }
     )
+      .select({ chats: 1 })
       .populate("chats.postedBy", "name _id image")
       .exec((err, result) => {
-        return res.send({ msg: "Successful", data: result });
+        return res.send({
+          msg: "Successful",
+          data: result.chats[result.chats.length - 1],
+        });
       });
   } else {
     data.save(async (err, result) => {
       const r = await result.populate("chats.postedBy", "name _id image");
       return res.send({
         msg: "Successful",
-        data: r,
+        data: r.chats,
       });
     });
   }
