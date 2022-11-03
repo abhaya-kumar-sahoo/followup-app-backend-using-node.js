@@ -1,32 +1,35 @@
 const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
-const validator = require("email-validator");
+const cloudinary = require("cloudinary").v2;
 //https://followup-back.herokuapp.com
 const User = require("../../schema/schema");
 const bcrypt = require("bcryptjs");
-const nodemailer = require("nodemailer");
 const auth = require("../../middleware/authenticate");
-const otp = Math.floor(Math.random() * 10000);
-const multer = require("multer");
 
-const storage = multer.diskStorage({
-  destination(req, file, cb) {
-    cb(null, "public");
-  },
-  filename(req, file, cb) {
-    cb(null, new Date().toString() + file.originalname);
-  },
+cloudinary.config({
+  cloud_name: "duzs5orm9",
+  api_key: "342391693671689",
+  api_secret: "B3HgSe9CFw-G0On3qCPUUDV_BKY",
+  secure: true,
 });
-const upload = multer({ storage }).single("image");
 
-router.post("/test", upload, async (req, res) => {
+router.post("/test", async (req, res) => {
   const url = req.protocol + "://" + req.get("host");
+  const file = req.files?.image;
+  if (file) {
+    await cloudinary.uploader
+      .upload(file.tempFilePath)
+      .then((result) => console.log(result.secure_url))
+      .catch((err) => {
+        console.log("errors", err);
+      });
+  }
 
   return res.send({
     data: {
       name: req.body.name,
-      image: req.file ? url + "/public/" + req.file.filename : null,
+      image: file,
     },
     error: false,
   });
@@ -38,12 +41,25 @@ router.post("/test", upload, async (req, res) => {
   // });
 });
 
-router.post("/registration", upload, async (req, res) => {
+router.post("/registration", async (req, res) => {
   require("dotenv").config({ path: __dirname + "../../.env" });
-  const url = req.protocol + "://" + req.get("host");
 
-  let jwtSecretKey = process.env.JWT_SECRET_KEY;
   try {
+    let url = null;
+    const file = req.files?.image;
+    if (file) {
+      await cloudinary.uploader
+        .upload(file.tempFilePath)
+        .then((result) => {
+          url = result.secure_url;
+        })
+        .catch((err) => {
+          return res.send({
+            msg: "Something went wrong in file upload",
+            error: true,
+          });
+        });
+    }
     const { name, password, cPassword } = req.body;
 
     if (!name || !password || !cPassword) {
@@ -82,7 +98,7 @@ router.post("/registration", upload, async (req, res) => {
 
     const data = await new User({
       name,
-      image: req.file ? url + "/public/" + req.file.filename : null,
+      image: url,
 
       password: hashPsw,
       created_date: {
@@ -123,7 +139,7 @@ router.post("/login", async (req, res) => {
 
 router.post("/user_exist", async (req, res) => {
   try {
-    const { name, password } = req.body;
+    const { name } = req.body;
 
     const data = await User.findOne({ name });
     if (data)

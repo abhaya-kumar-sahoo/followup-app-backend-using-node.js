@@ -11,9 +11,8 @@ const Posts = require("./src/router/Post/Post");
 const MyProjects = require("./src/router/MyProjects/MyProjects");
 const ProjectMembers = require("./src/router/ProjectMember/ProjectMembers");
 const RequestUsers = require("./src/router/RequestUserToProject/RequestUser");
-const multer = require("multer");
 const ChatRoute = require("./src/router/Chat/Chat");
-
+const fileUpload = require("express-fileupload");
 dotenv.config();
 
 const PORT = process.env.PORT || 3000;
@@ -21,10 +20,14 @@ app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.json());
-app.use("/public", express.static("public"));
 //Database Connection
 require("./src/db/connections");
 
+app.use(
+  fileUpload({
+    useTempFiles: true,
+  })
+);
 //Routes
 app.use("", loginRoute);
 
