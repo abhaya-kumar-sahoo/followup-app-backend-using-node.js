@@ -45,21 +45,6 @@ router.post("/registration", async (req, res) => {
   require("dotenv").config({ path: __dirname + "../../.env" });
 
   try {
-    let url = null;
-    const file = req.files?.image;
-    if (file) {
-      await cloudinary.uploader
-        .upload(file.tempFilePath)
-        .then((result) => {
-          url = result.secure_url;
-        })
-        .catch((err) => {
-          return res.send({
-            msg: "Something went wrong in file upload",
-            error: true,
-          });
-        });
-    }
     const { name, password, cPassword } = req.body;
 
     if (!name || !password || !cPassword) {
@@ -95,7 +80,21 @@ router.post("/registration", async (req, res) => {
     var time = parseInt(
       `${today.getHours()}${today.getMinutes()}${today.getSeconds()}`
     );
-
+    let url = null;
+    const file = req.files?.image;
+    if (file) {
+      await cloudinary.uploader
+        .upload(file.tempFilePath)
+        .then((result) => {
+          url = result.secure_url;
+        })
+        .catch((err) => {
+          return res.send({
+            msg: "Something went wrong in file upload",
+            error: true,
+          });
+        });
+    }
     const data = await new User({
       name,
       image: url,

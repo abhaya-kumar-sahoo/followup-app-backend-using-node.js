@@ -10,7 +10,10 @@ router.post("/get_chat", auth, async (req, res) => {
     "chats.postedBy",
     "name _id image"
   );
-  return res.send({ msg: "Successful", data: findOne.chats });
+  return res.send({
+    msg: "Successful",
+    data: findOne?.chats ? findOne.chats : [],
+  });
 });
 router.post("/add_chat", auth, async (req, res) => {
   const { text, project_id } = req.body;
