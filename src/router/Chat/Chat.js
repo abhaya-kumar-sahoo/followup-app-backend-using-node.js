@@ -63,7 +63,7 @@ router.post("/add_chat", auth, async (req, res) => {
       const r = await result.populate("chats.postedBy", "name _id image");
       return res.send({
         msg: "Successful",
-        data: r.chats,
+        data: r.chats[0],
       });
     });
   }
